@@ -964,7 +964,7 @@ public:
  * @param max_angle     The max angle to be considered in degrees. Should be >= min_angle and widthin range [0..180].
  * @return              Returns the number of line segments not included in the output vector.
  */
-    CV_WRAP virtual int filterOutAngle(const InputArray lines, OutputArray filtered, float min_angle, float max_angle) = 0;
+    CV_WRAP virtual int filterOutAngle(InputArray lines, OutputArray filtered, double min_angle, double max_angle) = 0;
 
 /**
  * Find all line elements that are fullfilling the angle and range requirenmnets.
@@ -977,7 +977,7 @@ public:
  * @param max_angle     The max angle to be considered in degrees. Should be >= min_angle and widthin range [0..180].
  * @return              Returns the number of line segments not included in the output vector.
  */
-    CV_WRAP virtual int retainAngle(const InputArray lines, OutputArray filtered, float min_angle, float max_angle) = 0;
+    CV_WRAP virtual int retainAngle(InputArray lines, OutputArray filtered, double min_angle, double max_angle) = 0;
 
 /**
  * Find all line elements that *are* fullfilling the size requirenmnets.
@@ -989,7 +989,7 @@ public:
  * @param min_length    Minimum length of the line segment.
  * @return              Returns the number of line segments not included in the output vector.
  */
-    CV_WRAP virtual int filterSize(const InputArray lines, OutputArray filtered, float min_length, float max_length = LSD_NO_SIZE_LIMIT) = 0;
+    CV_WRAP virtual int filterSize(InputArray lines, OutputArray filtered, double min_length, double max_length = LSD_NO_SIZE_LIMIT) = 0;
 
 /*
  * Find itnersection point of 2 lines.
@@ -1000,7 +1000,7 @@ public:
  * @return              The value in variable P is only valid when the return value is true.
  *                      Otherwise, the lines are parallel and the value can be ignored.
  */
-    CV_WRAP virtual bool intersection(const InputArray line1, const InputArray line2, Point& P) = 0;
+    CV_WRAP virtual bool intersection(InputArray line1, InputArray line2, Point& P) = 0;
 
     virtual ~LineSegmentDetector() { }
 };

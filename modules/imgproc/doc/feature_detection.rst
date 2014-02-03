@@ -547,10 +547,13 @@ Finds lines in the input image. See the lsd_lines.cpp sample for possible usage.
 .. ocv:function:: void LineSegmentDetector::detect(const InputArray _image, OutputArray _lines, OutputArray width = noArray(), OutputArray prec = noArray(), OutputArray nfa = noArray())
 
     :param image: A grayscale (CV_8UC1) input image.
-        If only a roi needs to be selected, use ::
+        If only a roi needs to be selected, use
 
-        lsd_ptr->detect(image(roi), lines, ...);
+.. code-block:: c
+
+        lsd_ptr->detect(image(roi), lines);
         lines += Scalar(roi.x, roi.y, roi.x, roi.y);
+
 
     :param lines: A vector of ``Vec4i`` elements specifying the beginning and ending point of a line. Where Vec4i is (x_1, y_1, x_2, y_2), point 1 is the start, point 2 - end. Returned lines are strictly oriented depending on the gradient.
 
@@ -605,7 +608,7 @@ LineSegmentDetector::filterOutAngle
 -----------------------------------
 Find all line elements that are *not* fullfilling the angle and range requirenmnets. Take all lines, whose angle is outside [min_angle, max_angle] range.
 
-.. ocv:function:: int filterOutAngle(const InputArray lines, OutputArray filtered, float min_angle, float max_angle)
+.. ocv:function:: int LineSegmentDetector::filterOutAngle(InputArray lines, OutputArray filtered, double min_angle, double max_angle)
 
     :param lines: Input lines.
 
@@ -622,7 +625,7 @@ LineSegmentDetector::retainAngle
 --------------------------------
 Find all line elements that are fullfilling the angle and range requirenmnets. Take all lines, whose angle is inside [min_angle, max_angle] range. The opposite of the filterOutAngle method.
 
-.. ocv:function:: int retainAngle(const InputArray lines, OutputArray filtered, float min_angle, float max_angle)
+.. ocv:function:: int LineSegmentDetector::retainAngle(InputArray lines, OutputArray filtered, double min_angle, double max_angle)
 
     :param lines: Input lines.
 
@@ -639,7 +642,7 @@ LineSegmentDetector::filterSize
 -------------------------------
 Find all line elements that *are* fullfilling the size requirenmnets. Lines, which are shorter than max_length and longer than min_length.
 
-.. ocv:function:: int filterSize(const InputArray lines, OutputArray filtered, float min_length, float max_length = LSD_NO_SIZE_LIMIT)
+.. ocv:function:: int LineSegmentDetector::filterSize(InputArray lines, OutputArray filtered, double min_length, double max_length = LSD_NO_SIZE_LIMIT)
 
     :param lines: Input lines.
 
@@ -656,7 +659,7 @@ LineSegmentDetector::intersection
 ---------------------------------
 Find the intersection point of 2 lines.
 
-.. ocv:function:: bool intersection(const InputArray line1, const InputArray line2, Point& P);
+.. ocv:function:: bool LineSegmentDetector::intersection(InputArray line1, InputArray line2, Point& P)
 
     :param line1: First line in format Vec4i(x1, y1, x2, y2).
 

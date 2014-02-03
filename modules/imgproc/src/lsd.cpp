@@ -238,7 +238,7 @@ public:
  * @param max_angle     The max angle to be considered in degrees. Should be >= min_angle and widthin range [0..180].
  * @return              Returns the number of line segments not included in the output vector.
  */
-    int filterOutAngle(const InputArray lines, OutputArray filtered, float min_angle, float max_angle);
+    int filterOutAngle(InputArray lines, OutputArray filtered, double min_angle, double max_angle);
 
 /**
  * Find all line elements that are fullfilling the angle and range requirenmnets.
@@ -251,7 +251,7 @@ public:
  * @param max_angle     The max angle to be considered in degrees. Should be >= min_angle and widthin range [0..180].
  * @return              Returns the number of line segments not included in the output vector.
  */
-    int retainAngle(const InputArray lines, OutputArray filtered, float min_angle, float max_angle);
+    int retainAngle(InputArray lines, OutputArray filtered, double min_angle, double max_angle);
 
 /**
  * Find all line elements that *are* fullfilling the size requirenmnets.
@@ -263,7 +263,7 @@ public:
  * @param min_length    Minimum length of the line segment.
  * @return              Returns the number of line segments not included in the output vector.
  */
-    int filterSize(const InputArray lines, OutputArray filtered, float min_length, float max_length = LSD_NO_SIZE_LIMIT);
+    int filterSize(InputArray lines, OutputArray filtered, double min_length, double max_length = LSD_NO_SIZE_LIMIT);
 
 /*
  * Find itnersection point of 2 lines.
@@ -274,7 +274,7 @@ public:
  * @return              The value in variable P is only valid when the return value is true.
  *                      Otherwise, the lines are parallel and the value can be ignored.
  */
-    bool intersection(const InputArray line1, const InputArray line2, Point& P);
+    bool intersection(InputArray line1, InputArray line2, Point& P);
 
 private:
     Mat image;
@@ -441,12 +441,12 @@ private:
 /**
  * A helper funciton for filterOutAngle and retainAngle.
  */
-    int angle_filtering(const InputArray lines, OutputArray filtered, float min_angle, float max_angle, int retain_type);
+    int angle_filtering(InputArray lines, OutputArray filtered, double min_angle, double max_angle, int retain_type);
 
 /*
  * Finds the equation parameters of a line in the form of Ax + By = C.
  */
-    void find_eq_params(const Vec4i& line, float& a, float& b, float& c);
+    void find_eq_params(const Vec4i& line, double& a, double& b, double& c);
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -1305,7 +1305,7 @@ int LineSegmentDetectorImpl::compareSegments(const Size& size, InputArray lines1
     return N;
 }
 
-int LineSegmentDetectorImpl::angle_filtering(const InputArray lines, OutputArray filtered, float min_angle, float max_angle, int retain_type)
+int LineSegmentDetectorImpl::angle_filtering(InputArray lines, OutputArray filtered, double min_angle, double max_angle, int retain_type)
 {
     CV_Assert(min_angle >= 0 && min_angle < 180 &&
               max_angle >= 0 && max_angle < 180);
@@ -1319,8 +1319,8 @@ int LineSegmentDetectorImpl::angle_filtering(const InputArray lines, OutputArray
         Point b(v[0], v[1]);
         Point e(v[2], v[3]);
 
-        Point dv = e - b;
-        float angle = fastAtan2(dv.y, dv.x); // returns in range [0..360]
+        Point2f dv = e - b;
+        double angle = fastAtan2(dv.y, dv.x); // returns in range [0..360]
         if (angle >= 180) angle -= 180.f;
 
         bool angle_in = (angle >= min_angle && angle <= max_angle);
@@ -1334,17 +1334,17 @@ int LineSegmentDetectorImpl::angle_filtering(const InputArray lines, OutputArray
     return num_filtered;
 }
 
-int LineSegmentDetectorImpl::filterOutAngle(const InputArray lines, OutputArray filtered, float min_angle, float max_angle)
+int LineSegmentDetectorImpl::filterOutAngle(InputArray lines, OutputArray filtered, double min_angle, double max_angle)
 {
     return angle_filtering(lines, filtered, min_angle, max_angle, RETAIN_OUT);
 }
 
-int LineSegmentDetectorImpl::retainAngle(const InputArray lines, OutputArray filtered, float min_angle, float max_angle)
+int LineSegmentDetectorImpl::retainAngle(InputArray lines, OutputArray filtered, double min_angle, double max_angle)
 {
     return angle_filtering(lines, filtered, min_angle, max_angle, RETAIN_IN);
 }
 
-int LineSegmentDetectorImpl::filterSize(const InputArray lines, OutputArray filtered, float min_length, float max_length)
+int LineSegmentDetectorImpl::filterSize(InputArray lines, OutputArray filtered, double min_length, double max_length)
 {
     int num_filtered = 0;
     std::vector<Vec4i> f;
@@ -1356,7 +1356,7 @@ int LineSegmentDetectorImpl::filterSize(const InputArray lines, OutputArray filt
         Point b(v[0], v[1]);
         Point e(v[2], v[3]);
 
-        float len = norm(b - e);
+        double len = norm(b - e);
         if (((min_length == LSD_NO_SIZE_LIMIT) || (len >= min_length)) &&
             ((max_length == LSD_NO_SIZE_LIMIT) || (len < max_length)))
             f.push_back(v);
@@ -1367,26 +1367,26 @@ int LineSegmentDetectorImpl::filterSize(const InputArray lines, OutputArray filt
     return num_filtered;
 }
 
-void LineSegmentDetectorImpl::find_eq_params(const Vec4i& line, float& a, float& b, float& c)
+void LineSegmentDetectorImpl::find_eq_params(const Vec4i& line, double& a, double& b, double& c)
 {
-    a = line[3] - line[1];
-    b = line[0] - line[2];
+    a = double(line[3] - line[1]);
+    b = double(line[0] - line[2]);
     c = a * line[0] + b * line[1];
 }
 
-bool LineSegmentDetectorImpl::intersection(const InputArray line1, const InputArray line2, Point& P)
+bool LineSegmentDetectorImpl::intersection(InputArray line1, InputArray line2, Point& P)
 {
     CV_Assert(!line1.empty() && !line2.empty());
 
     Vec4i l1 = line1.getMat().at<Vec4i>(0);
     Vec4i l2 = line2.getMat().at<Vec4i>(0);
 
-    float x, y, a1, b1, a2, b2, c1, c2;
+    double x, y, a1, b1, a2, b2, c1, c2;
 
     find_eq_params(l1, a1, b1, c1);
     find_eq_params(l2, a2, b2, c2);
 
-    float det = a1 * b2 - a2 * b1;
+    double det = a1 * b2 - a2 * b1;
     if (det == 0)
     {
         return false;
@@ -1396,7 +1396,8 @@ bool LineSegmentDetectorImpl::intersection(const InputArray line1, const InputAr
         x = (b2 * c1 - b1 * c2) / det;
         y = (a1 * c2 - a2 * c1) / det;
     }
-    P = Point(x, y);
+
+    P = Point(int(x), int(y));
     return true;
 }
 
