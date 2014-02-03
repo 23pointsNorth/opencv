@@ -544,7 +544,7 @@ LineSegmentDetector::detect
 ---------------------------
 Finds lines in the input image. See the lsd_lines.cpp sample for possible usage.
 
-.. ocv:function:: void LineSegmentDetector::detect(const InputArray _image, OutputArray _lines, OutputArray width = noArray(), OutputArray prec = noArray(), OutputArray nfa = noArray())
+.. ocv:function:: void LineSegmentDetector::detect(InputArray _image, OutputArray _lines, OutputArray width = noArray(), OutputArray prec = noArray(), OutputArray nfa = noArray())
 
     :param image: A grayscale (CV_8UC1) input image.
         If only a roi needs to be selected, use
